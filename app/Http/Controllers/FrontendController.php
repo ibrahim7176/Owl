@@ -18,6 +18,7 @@ use DB;
 use Hash;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session as FacadesSession;
 
 class FrontendController extends Controller
 {
@@ -405,14 +406,13 @@ class FrontendController extends Controller
         // return $request->all();
         $this->validate($request, [
             'name' => 'string|required|min:2',
-            'intagrm_account' => 'string|required',
             'email' => 'string|required|unique:users,email',
             'password' => 'required|min:6|confirmed',
         ]);
         $data = $request->all();
         // dd($data);
         $check = $this->create($data);
-        Session::put('user', $data['email']);
+        FacadesSession::put('user', $data['email']);
         if ($check) {
             request()->session()->flash('success', 'Successfully registered');
             return redirect()->route('home');
@@ -426,6 +426,7 @@ class FrontendController extends Controller
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'instagram_account' => $data['instagram_account'],
             'password' => Hash::make($data['password']),
             'status' => 'active'
         ]);
